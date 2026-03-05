@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block page_title %}Manage Form Fields{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-cog me-2"></i>Manage Fields - 
+                        <span id="formNameDisplay" class="text-primary">Loading...</span>
+                    </h5>
+                    
+                    <div class="d-flex gap-2">
+                        <a href="/forms-builder/" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Forms
+                        </a>
+                        <button class="btn btn-success" onclick="showAddFieldModal()">
+                            <i class="fas fa-plus me-2"></i>Add Field
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="card-body">
+                    <!-- Fields List with Drag & Drop -->
+                    <div id="fieldsList" class="field-list">
+                        <div class="text-center py-5">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading fields...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add/Edit Field Modal -->
+<div class="modal fade" id="fieldModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="fieldModalLabel">Add Field</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            
+            <div class="modal-body">
+                <form id="fieldForm">
+                    <input type="hidden" id="fieldId">
+                    <input type="hidden" id="formId" value="{{ request.GET.form_id }}">
+                    
+                    <div class="mb-3">
+                        <label for="fieldLabel" class="form-label">
+                            Field Label <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="fieldLabel" 
+                               placeholder="e.g., Full Name"
+                               required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="fieldType" class="form-label">
+                            Field Type <span class="text-danger">*</span>
+                        </label>
+                        <select class="form-select" id="fieldType" required>
+                            <option value="">Select field type</option>
+                            <option value="text">Text</option>
+                            <option value="number">Number</option>
+                            <option value="date">Date</option>
+                            <option value="email">Email</option>
+                            <option value="tel">Phone</option>
+                            <option value="textarea">Textarea</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>Cancel
+                </button>
+                <button type="button" class="btn btn-primary" onclick="saveField()">
+                    <i class="fas fa-save me-2"></i>Save Field
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- SortableJS for drag & drop functionality -->
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+<script src="{% static 'js/form_fields.js' %}"></script>
+{% endblock %}

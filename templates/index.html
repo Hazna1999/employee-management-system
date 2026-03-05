@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Employee Management System built with Django">
+    <title>Employee Management System</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --text-color: #1f2937;
+            --light-bg: #f3f4f6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Header Styles */
+        .header {
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .header .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav a:hover {
+            color: var(--primary-color);
+        }
+
+        .btn-login {
+            background: var(--primary-color);
+            color: white !important;
+            padding: 0.5rem 1.5rem;
+            border-radius: 5px;
+            transition: background 0.3s !important;
+        }
+
+        .btn-login:hover {
+            background: var(--secondary-color);
+            color: white !important;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            padding: 0 1rem;
+        }
+
+        .hero-content {
+            max-width: 800px;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            animation: fadeInUp 1s ease 0.2s both;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: white;
+            color: var(--primary-color);
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 600;
+            transition: transform 0.3s, box-shadow 0.3s;
+            animation: fadeInUp 1s ease 0.4s both;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .footer {
+            background: #1f2937;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Modal Styles */
+        .modal-content {
+            border-radius: 10px;
+        }
+
+        .modal-header {
+            background: var(--primary-color);
+            color: white;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .modal-header .btn-close {
+            filter: brightness(0) invert(1);
+        }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-color);
+        }
+
+        .user-info i {
+            color: var(--primary-color);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .nav {
+                gap: 1rem;
+            }
+
+            .btn-login {
+                padding: 0.3rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Toast Container for Notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">EMS</div>
+            <nav class="nav" id="mainNav">
+                <!-- Dynamically populated by JavaScript -->
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Employee Management System</h1>
+            <p>Manage employees efficiently with secure authentication, dynamic forms, and role-based access control.</p>
+            <div id="heroButton"></div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        © 2026 Employee Management System. All rights reserved.
+    </footer>
+
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Login</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label for="loginUsername" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="loginUsername" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="loginPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="loginPassword" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Login</button>
+                    </form>
+                    <div class="text-center mt-3 text-muted">
+                        <small>Contact admin for account access</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts - Order matters -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // ============================================
+        // Global Axios Configuration
+        // ============================================
+        axios.defaults.baseURL = window.location.origin;
+
+        // Add authentication token to all requests
+        axios.interceptors.request.use(
+            config => {
+                const token = localStorage.getItem('access_token');
+                if (token) {
+                    config.headers.Authorization = `Bearer ${token}`;
+                }
+                return config;
+            },
+            error => Promise.reject(error)
+        );
+
+        // Handle token refresh on 401 errors
+        axios.interceptors.response.use(
+            response => response,
+            async error => {
+                const originalRequest = error.config;
+                if (error.response?.status === 401 && !originalRequest._retry) {
+                    originalRequest._retry = true;
+                    try {
+                        const refreshToken = localStorage.getItem('refresh_token');
+                        const response = await axios.post('/api/token/refresh/', {
+                            refresh: refreshToken
+                        });
+                        localStorage.setItem('access_token', response.data.access);
+                        originalRequest.headers.Authorization = `Bearer ${response.data.access}`;
+                        return axios(originalRequest);
+                    } catch (refreshError) {
+                        logout();
+                    }
+                }
+                return Promise.reject(error);
+            }
+        );
+
+        // ============================================
+        // Toast Notification
+        // ============================================
+        function showToast(message, type = 'info') {
+            const toastContainer = document.getElementById('toastContainer');
+            const toastId = 'toast-' + Date.now();
+            const bgColor = {
+                'success': 'bg-success',
+                'error': 'bg-danger',
+                'warning': 'bg-warning',
+                'info': 'bg-info'
+            }[type] || 'bg-info';
+            
+            const toastHtml = `
+                <div id="${toastId}" class="toast align-items-center text-white ${bgColor} border-0" role="alert">
+                    <div class="d-flex">
+                        <div class="toast-body">${message}</div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                </div>
+            `;
+            
+            toastContainer.insertAdjacentHTML('beforeend', toastHtml);
+            const toastElement = document.getElementById(toastId);
+            const toast = new bootstrap.Toast(toastElement, { delay: 3000 });
+            toast.show();
+        }
+
+        // ============================================
+        // Logout
+        // ============================================
+        function logout(e) {
+            if (e) e.preventDefault();
+            localStorage.clear();
+            showToast('Logged out successfully', 'success');
+            setTimeout(() => window.location.href = '/', 1500);
+        }
+
+        // ============================================
+        // Setup Page Based on Login Status
+        // ============================================
+        function setupPage() {
+            const token = localStorage.getItem('access_token');
+            const nav = document.getElementById('mainNav');
+            const heroButton = document.getElementById('heroButton');
+            
+            if (token) {
+                // User is logged in
+                const username = localStorage.getItem('username') || 'User';
+                nav.innerHTML = `
+                    <a href="/">Home</a>
+                    <div class="user-info">
+                        <i class="fas fa-user-circle"></i>
+                        <span>${username}</span>
+                    </div>
+                    <a href="#" id="logoutBtn" class="btn-login">Logout</a>
+                `;
+                
+                heroButton.innerHTML = `
+                    <a href="/dashboard/" class="btn">
+                        <i class="fas fa-tachometer-alt"></i> Go to Dashboard
+                    </a>
+                `;
+                
+                document.getElementById('logoutBtn')?.addEventListener('click', logout);
+            } else {
+                // User is not logged in
+                nav.innerHTML = `
+                    <a href="/">Home</a>
+                    <a href="#" class="btn-login" data-bs-toggle="modal" data-bs-target="#loginModal">Login</a>
+                `;
+                
+                heroButton.innerHTML = `
+                    <a href="#" class="btn" data-bs-toggle="modal" data-bs-target="#loginModal">
+                        <i class="fas fa-sign-in-alt"></i> Get Started
+                    </a>
+                `;
+            }
+            
+            // Auto-show login modal if redirected from protected page
+            if (window.location.search.includes('next=/') && !token) {
+                setTimeout(() => {
+                    new bootstrap.Modal(document.getElementById('loginModal')).show();
+                }, 500);
+            }
+        }
+
+        // ============================================
+        // Login Handler
+        // ============================================
+        document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            // Show loading state
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Logging in...';
+            submitBtn.disabled = true;
+            
+            try {
+                const response = await axios.post('/accounts/login/', {
+                    username,
+                    password
+                });
+                
+                // Store authentication data
+                localStorage.setItem('access_token', response.data.access);
+                localStorage.setItem('refresh_token', response.data.refresh);
+                localStorage.setItem('username', response.data.username);
+                localStorage.setItem('is_admin', response.data.is_superuser ? 'true' : 'false');
+                
+                showToast('Login successful!', 'success');
+                bootstrap.Modal.getInstance(document.getElementById('loginModal')).hide();
+                
+                // Redirect based on role
+                setTimeout(() => {
+                    window.location.href = response.data.is_superuser ? '/list/' : '/dashboard/';
+                }, 1500);
+                
+            } catch (error) {
+                console.error('Login error:', error);
+                
+                if (error.response?.status === 403) {
+                    showToast('❌ Access Denied: Only employees can access this system', 'error');
+                } else if (error.response?.status === 401) {
+                    showToast('❌ Invalid username or password', 'error');
+                } else {
+                    showToast('❌ Login failed. Please try again.', 'error');
+                }
+                
+                // Reset button
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', setupPage);
+
+        // Make logout global
+        window.logout = logout;
+        window.showToast = showToast;
+    </script>
+</body>
+</html>

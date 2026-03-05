@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block page_title %}My Dashboard{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Welcome Card -->
+    <div class="col-md-12 mb-4">
+        <div class="card">
+            <div class="card-body text-center py-5">
+                <i class="fas fa-user-circle fa-5x text-primary mb-3"></i>
+                <h2 class="mb-3">Welcome, <span id="welcomeUsername">{{ user.username }}</span>!</h2>
+                <p class="text-muted mb-4">You are logged in as an employee.</p>
+                
+                <div class="d-flex justify-content-center gap-3">
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#profileModal">
+                        <i class="fas fa-user me-2"></i>View My Profile
+                    </button>
+                    <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
+                        <i class="fas fa-key me-2"></i>Change Password
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats Cards -->
+    <div class="col-md-4">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <i class="fas fa-calendar-check fa-3x text-success mb-3"></i>
+                <h5>Date of Joining</h5>
+                <p class="h6" id="joiningDate">Loading...</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <i class="fas fa-building fa-3x text-info mb-3"></i>
+                <h5>Department</h5>
+                <p class="h6" id="userDepartment">Loading...</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <i class="fas fa-briefcase fa-3x text-warning mb-3"></i>
+                <h5>Designation</h5>
+                <p class="h6" id="userDesignation">Loading...</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    (function() {
+        'use strict';
+
+        /**
+         * Load and display employee dashboard data
+         */
+        async function loadDashboardData() {
+            try {
+                const token = localStorage.getItem('access_token');
+                if (!token) {
+                    window.location.href = '/';
+                    return;
+                }
+
+                const response = await axios.get('/employees/', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                const employees = response.data;
+                const currentUser = localStorage.getItem('username');
+                const employee = employees.find(emp => emp.user?.username === currentUser);
+                
+                if (employee) {
+                    // Update welcome message
+                    document.getElementById('welcomeUsername').textContent = 
+                        employee.user?.username || currentUser;
+                    
+                    // Update stats cards
+                    document.getElementById('joiningDate').textContent = 
+                        employee.date_of_joining 
+                            ? new Date(employee.date_of_joining).toLocaleDateString() 
+                            : 'N/A';
+                    
+                    document.getElementById('userDepartment').textContent = 
+                        employee.department || 'N/A';
+                    
+                    document.getElementById('userDesignation').textContent = 
+                        employee.designation || 'N/A';
+                }
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+                
+                // Show user-friendly error message
+                if (error.response?.status === 401) {
+                    window.location.href = '/';
+                }
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', loadDashboardData);
+    })();
+</script>
+{% endblock %}

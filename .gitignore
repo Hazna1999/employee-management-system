@@ -1,0 +1,8 @@
+venv/                    # Virtual environment (should not be committed)
+__pycache__/             # Python cache files
+*.pyc                    # Compiled Python files
+db.sqlite3               # SQLite database (local data)
+.env                     # Environment variables (secrets)
+.DS_Store                # macOS system files
+staticfiles/             # Collected static files (production)
+media/                   # User uploaded files
