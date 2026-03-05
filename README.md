@@ -1,6 +1,8 @@
 # Employee Management System
 
 A comprehensive Employee Management System built with Django REST Framework and vanilla JavaScript. Features dynamic form builder, role-based access control, and JWT authentication.
+<img width="1466" height="802" alt="Screenshot 2026-03-05 at 10 13 31 PM" src="https://github.com/user-attachments/assets/78e6ad2c-69cf-4a86-a75c-219c709c5832" />
+
 
 ## 🚀 Features
 
